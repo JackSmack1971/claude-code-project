@@ -16,8 +16,8 @@ Generate a markdown checklist. Do not wrap in verbose prose.
 ### Example Output:
 > **Mission:** Refactor Auth Middleware
 >
-> - [ ] **Step 1: Research:** Map out current usage of `verifyToken` in `/src/middleware`.
-> - [ ] **Step 2: Scaffolding:** Create `src/lib/auth/new-strategy.ts` with interface definitions.
+> - [ ] **Step 1: Scaffolding & Tests:** Create `src/lib/auth.ts` (empty) and `src/lib/auth.test.ts` (with failing tests).
+> - [ ] **Step 2: Implementation:** Write logic in `auth.ts` to make tests pass.
 > - [ ] **Step 3: Implementation:** Implement the JWT validation logic in the new file.
 > - [ ] **Step 4: Integration:** Swap imports in `src/routes/protected.ts`.
 > - [ ] **Step 5: Cleanup:** Remove old `verifyToken` code once tests pass.
