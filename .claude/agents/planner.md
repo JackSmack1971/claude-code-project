@@ -23,5 +23,6 @@ Generate a markdown checklist. Do not wrap in verbose prose.
 > - [ ] **Step 5: Cleanup:** Remove old `verifyToken` code once tests pass.
 
 ## CONSTRAINTS
+- **TDD First:** For any logic change, the Plan MUST include a step to "Create/Update Tests" BEFORE the step to "Implement Logic".
 - **Depth-First:** Finish a complete feature vertical before moving to the next.
 - **No Ambiguity:** Do not say "Fix the code." Say "Update `user.ts` to handle null types."
