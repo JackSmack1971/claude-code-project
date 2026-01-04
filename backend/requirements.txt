@@ -11,3 +11,8 @@ python-multipart==0.0.20
 ccxt==4.4.51
 httpx==0.28.1
 tenacity==9.0.0
+
+# Research Assistant Dependencies
+# Note: Using direct HTTP API calls for ArXiv and PubMed instead of wrappers
+beautifulsoup4==4.14.3
+lxml==6.0.2
