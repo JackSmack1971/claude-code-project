@@ -31,8 +31,11 @@ You are an autonomous engineering system. To maintain "Surgical Precision," you 
         * IF `PASS` -> Commit changes -> Return to **STATE: [PLAN]** for next step.
         * IF `FAIL` -> Enter **STATE: [DEBUG]**.
 
-6.  **STATE: [DEBUG]** (Fallback)
-    * **Action:** Analyze the error output. Do not blindly attempt a fix. Formulate a hypothesis, then return to **STATE: [EXECUTION]**.
+6. **STATE: [DEBUG]** (Fallback)
+    * **Action:** Analyze the error output.
+    * **Decision:**
+        * IF `Implementation Error`: Formulate fix -> Return to **STATE: [EXECUTION]**.
+        * IF `Strategic Error` (Plan is impossible): Request re-plan -> Return to **STATE: [PLAN]**.
 
 ---
 
