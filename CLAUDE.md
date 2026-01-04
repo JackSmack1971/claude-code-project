@@ -31,8 +31,10 @@ Invariant: The current state of the mission must always be written to .claude/SE
     * **Logic:**
         * IF `PASS` -> Commit changes -> Return to **STATE: [PLAN]** for next step.
         * IF `FAIL` -> Enter **STATE: [DEBUG]**.
-
-6. **STATE: [DEBUG]** (Fallback)
+6. **STATE: [PERSIST]** (Cleanup)
+    * **Action:** At the end of every turn, update `.claude/SESSION.md` with the current checkbox status.
+    
+7. **STATE: [DEBUG]** (Fallback)
     * **Action:** Analyze the error output.
     * **Decision:**
         * IF `Implementation Error`: Formulate fix -> Return to **STATE: [EXECUTION]**.
