@@ -9,7 +9,8 @@ A modular application for rapid deployment and persistence of AI agents with Fas
 - **Agent Sandbox**: Interactive chat interface with real-time streaming
 - **Trading Tools**: Optional CCXT integration for financial operations
 - **Multi-Model Support**: Access 300+ models via OpenRouter
-- **🔗 Multi-Agent Orchestration**: Build complex workflows with DAG-based agent chains and dynamic delegation (NEW!)
+- **🔗 Multi-Agent Orchestration**: Build complex workflows with DAG-based agent chains and dynamic delegation
+- **🔬 Research Assistant**: Academic paper search (ArXiv, PubMed), web scraping, and citation management (NEW!)
 
 ## Tech Stack
 
@@ -75,14 +76,16 @@ streamlit run app.py
 agentfactory/
 ├── backend/
 │   ├── main.py              # FastAPI app with lifespan management
-│   ├── models.py            # SQLAlchemy models (agent blueprints)
-│   ├── workflow_models.py   # Workflow orchestration models (NEW)
+│   ├── models.py            # SQLAlchemy models (agent blueprints, citations)
+│   ├── workflow_models.py   # Workflow orchestration models
+│   ├── research_tools.py    # Research assistant tools (NEW)
+│   ├── research_schemas.py  # Research API schemas (NEW)
 │   ├── database.py          # Database configuration
 │   ├── schemas.py           # Pydantic schemas
-│   ├── workflow_schemas.py  # Workflow API schemas (NEW)
+│   ├── workflow_schemas.py  # Workflow API schemas
 │   ├── agents.py            # Pydantic AI agent factory
-│   ├── delegation.py        # Dynamic delegation system (NEW)
-│   ├── orchestrator.py      # Workflow execution engine (NEW)
+│   ├── delegation.py        # Dynamic delegation system
+│   ├── orchestrator.py      # Workflow execution engine
 │   ├── tools.py             # Agent tools (including CCXT)
 │   └── requirements.txt
 ├── frontend/
@@ -102,13 +105,14 @@ agentfactory/
 ├── docs/
 │   ├── QUICKSTART.md
 │   ├── API.md
-│   └── ORCHESTRATION.md     # Multi-agent orchestration guide (NEW)
+│   ├── ORCHESTRATION.md     # Multi-agent orchestration guide
+│   └── RESEARCH_ASSISTANT.md # Research assistant documentation (NEW)
 └── .env.example
 ```
 
 ## Multi-Agent Orchestration
 
-AgentFactory now supports advanced multi-agent workflows:
+AgentFactory supports advanced multi-agent workflows:
 
 - **DAG-Based Workflows**: Define agent execution as Directed Acyclic Graphs
 - **Dynamic Delegation**: Agents can delegate tasks to other agents at runtime
@@ -116,6 +120,17 @@ AgentFactory now supports advanced multi-agent workflows:
 - **Form-Based Builder**: Create workflows without coding
 
 See [ORCHESTRATION.md](docs/ORCHESTRATION.md) for detailed documentation.
+
+## Research Assistant
+
+AgentFactory includes research tools for academic workflows:
+
+- **Academic Search**: Search ArXiv (STEM papers) and PubMed (biomedical papers)
+- **Web Scraping**: Extract content from academic webpages with BeautifulSoup
+- **Citation Management**: Format citations in BibTeX, APA, MLA, and Chicago styles
+- **Saved Citations**: Persist and manage citation libraries
+
+See [RESEARCH_ASSISTANT.md](docs/RESEARCH_ASSISTANT.md) for API documentation and examples.
 
 ## Security
 

@@ -44,6 +44,21 @@ from workflow_schemas import (
 )
 from orchestrator import WorkflowOrchestrator
 
+# Research assistant imports
+from models import SavedCitation
+from research_schemas import (
+    SearchQuery,
+    PaperResult,
+    ScrapeRequest,
+    ScrapeResult,
+    CitationRequest,
+    CitationResponse,
+    SavedCitationCreate,
+    SavedCitationRead,
+    CitationFormat,
+)
+from research_tools import search_arxiv, search_pubmed, scrape_webpage, format_citation
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -759,6 +774,222 @@ async def get_execution_logs(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=str(e)
         )
+
+
+# ============================================================================
+# Research Assistant Endpoints
+# ============================================================================
+
+@app.post("/research/arxiv", response_model=list[PaperResult])
+async def search_arxiv_endpoint(query: SearchQuery) -> list[PaperResult]:
+    """
+    Search ArXiv for academic papers.
+
+    Args:
+        query: Search query with query string and max_results
+
+    Returns:
+        List of paper results from ArXiv
+
+    Example:
+        POST /research/arxiv
+        {"query": "machine learning", "max_results": 10}
+    """
+    try:
+        results = await search_arxiv(query.query, query.max_results)
+        return results
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"ArXiv search failed: {str(e)}"
+        )
+
+
+@app.post("/research/pubmed", response_model=list[PaperResult])
+async def search_pubmed_endpoint(query: SearchQuery) -> list[PaperResult]:
+    """
+    Search PubMed for biomedical papers.
+
+    Args:
+        query: Search query with query string and max_results
+
+    Returns:
+        List of paper results from PubMed
+
+    Example:
+        POST /research/pubmed
+        {"query": "CRISPR gene editing", "max_results": 10}
+    """
+    try:
+        results = await search_pubmed(query.query, query.max_results)
+        return results
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"PubMed search failed: {str(e)}"
+        )
+
+
+@app.post("/research/scrape", response_model=ScrapeResult)
+async def scrape_webpage_endpoint(request: ScrapeRequest) -> ScrapeResult:
+    """
+    Scrape content from a webpage.
+
+    Args:
+        request: Scrape request with URL and optional selector
+
+    Returns:
+        Scraped content and metadata
+
+    Example:
+        POST /research/scrape
+        {"url": "https://arxiv.org/abs/1706.03762", "selector": "div.abstract"}
+    """
+    try:
+        result = await scrape_webpage(
+            url=request.url,
+            selector=request.selector,
+            extract_links=request.extract_links
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Web scraping failed: {str(e)}"
+        )
+
+
+@app.post("/research/cite", response_model=CitationResponse)
+async def format_citation_endpoint(request: CitationRequest) -> CitationResponse:
+    """
+    Format a paper citation in the specified format.
+
+    Args:
+        request: Citation request with paper data and format
+
+    Returns:
+        Formatted citation string
+
+    Example:
+        POST /research/cite
+        {"paper": {...}, "format": "bibtex"}
+    """
+    try:
+        citation = format_citation(request.paper, request.format)
+        return CitationResponse(citation=citation, format=request.format)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Citation formatting failed: {str(e)}"
+        )
+
+
+@app.post(
+    "/research/citations",
+    response_model=SavedCitationRead,
+    status_code=status.HTTP_201_CREATED
+)
+async def save_citation(
+    citation: SavedCitationCreate,
+    db: AsyncSession = Depends(get_db)
+) -> SavedCitation:
+    """
+    Save a citation to the database.
+
+    Args:
+        citation: Citation data to save
+        db: Database session
+
+    Returns:
+        Saved citation with ID and timestamp
+    """
+    db_citation = SavedCitation(
+        paper_data=citation.paper_data.model_dump(),
+        format=citation.format.value,
+        notes=citation.notes
+    )
+    db.add(db_citation)
+    await db.flush()
+    await db.refresh(db_citation)
+    return db_citation
+
+
+@app.get("/research/citations", response_model=list[SavedCitationRead])
+async def list_saved_citations(
+    db: AsyncSession = Depends(get_db),
+    skip: int = 0,
+    limit: int = 100
+) -> list[SavedCitation]:
+    """
+    Get all saved citations.
+
+    Args:
+        db: Database session
+        skip: Number of records to skip (pagination)
+        limit: Maximum number of records to return
+
+    Returns:
+        List of saved citations
+    """
+    query = select(SavedCitation).offset(skip).limit(limit).order_by(SavedCitation.created_at.desc())
+    result = await db.execute(query)
+    citations = result.scalars().all()
+    return list(citations)
+
+
+@app.get("/research/citations/{citation_id}", response_model=SavedCitationRead)
+async def get_saved_citation(
+    citation_id: int,
+    db: AsyncSession = Depends(get_db)
+) -> SavedCitation:
+    """
+    Get a specific saved citation by ID.
+
+    Args:
+        citation_id: ID of the citation to retrieve
+        db: Database session
+
+    Returns:
+        Saved citation details
+    """
+    query = select(SavedCitation).where(SavedCitation.id == citation_id)
+    result = await db.execute(query)
+    citation = result.scalar_one_or_none()
+
+    if not citation:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Citation {citation_id} not found"
+        )
+
+    return citation
+
+
+@app.delete("/research/citations/{citation_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_saved_citation(
+    citation_id: int,
+    db: AsyncSession = Depends(get_db)
+) -> None:
+    """
+    Delete a saved citation.
+
+    Args:
+        citation_id: ID of the citation to delete
+        db: Database session
+    """
+    query = select(SavedCitation).where(SavedCitation.id == citation_id)
+    result = await db.execute(query)
+    citation = result.scalar_one_or_none()
+
+    if not citation:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Citation {citation_id} not found"
+        )
+
+    stmt = delete(SavedCitation).where(SavedCitation.id == citation_id)
+    await db.execute(stmt)
+    await db.flush()
 
 
 if __name__ == "__main__":

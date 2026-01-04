@@ -4,7 +4,7 @@ Defines the agent blueprint schema with async operations support.
 """
 from datetime import datetime
 from typing import Optional
-from sqlalchemy import String, Float, Text, DateTime, Boolean
+from sqlalchemy import String, Float, Text, DateTime, Boolean, JSON
 from sqlalchemy.orm import Mapped, mapped_column
 from database import Base
 
@@ -51,3 +51,32 @@ class AgentBlueprint(Base):
 
     def __repr__(self) -> str:
         return f"<AgentBlueprint(id={self.id}, name='{self.name}', model='{self.model_id}')>"
+
+
+class SavedCitation(Base):
+    """
+    Persistent storage for saved academic paper citations.
+
+    Attributes:
+        id: Primary key
+        paper_data: JSON storage of PaperResult data
+        format: Preferred citation format (bibtex, apa, mla, chicago)
+        notes: User notes about the paper
+        created_at: Timestamp of citation save
+    """
+    __tablename__ = "saved_citations"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    paper_data: Mapped[dict] = mapped_column(JSON, nullable=False)
+    format: Mapped[str] = mapped_column(String(50), default="bibtex", nullable=False)
+    notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.utcnow,
+        nullable=False
+    )
+
+    def __repr__(self) -> str:
+        title = self.paper_data.get("title", "Unknown")[:50]
+        return f"<SavedCitation(id={self.id}, title='{title}...')>"
