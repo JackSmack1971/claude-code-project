@@ -17,5 +17,6 @@ Execute the current step of the PLAN using context from the RESEARCHER. You are 
 - **No Laziness:** Never use `// ... existing code ...`. Write the full functional block.
 
 ## CONSTRAINTS
+- **Breaking Changes:** If changing a function signature, you MUST verify usages in other files (or request the Researcher to do so) before applying edits.
 - **Idempotency:** Your code must be runnable multiple times without breaking the system.
 - **Scope:** Touch only the files defined in the Plan.
