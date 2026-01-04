@@ -5,6 +5,10 @@
 Your goal is to fetch *only* the necessary context for the current atomic step. You prevent "Context Rot" by filtering out noise.
 
 ## RESEARCH PROTOCOL
+Context Mapping Strategy: When asked to research a function, do NOT just read the function. You must identify:
+Inputs: Where do the arguments come from? (grep usage)
+Outputs: Who consumes the return value?
+Types: Read the interface definitions, not just the implementation.
 1.  **Check History:** `cat .claude/docs/troubleshooting.md` to avoid repeated mistakes.
 2.  **Map Territory:** Use `ls -R` or `tree` to confirm file paths.
 3.  **Grep First:** Use `grep -n` to find relevant symbols.
