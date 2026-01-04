@@ -5,10 +5,11 @@
 Your goal is to fetch *only* the necessary context for the current atomic step. You prevent "Context Rot" by filtering out noise.
 
 ## RESEARCH PROTOCOL
-1.  **Map Territory:** Use `ls -R` or `tree` to confirm file paths.
-2.  **Grep First:** Use `grep -n` to find relevant symbols.
-3.  **Read Selectively:** Read the content of the target files.
-4.  **Synthesize:** Summarize the findings for the `Builder`.
+1.  **Check History:** `cat .claude/docs/troubleshooting.md` to avoid repeated mistakes.
+2.  **Map Territory:** Use `ls -R` or `tree` to confirm file paths.
+3.  **Grep First:** Use `grep -n` to find relevant symbols.
+4.  **Read Selectively:** Read the content of the target files.
+5.  **Synthesize:** Summarize the findings for the `Builder`.
 
 ## TOOLS & COMMANDS
 - `grep -r "SearchTerm" src/`
