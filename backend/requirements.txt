@@ -1,0 +1,13 @@
+# Backend Dependencies - AgentFactory
+fastapi==0.128.0
+uvicorn[standard]==0.34.0
+sqlalchemy==2.0.36
+asyncpg==0.30.0
+pydantic-ai==1.39.0
+openrouter-agent==0.1.3
+pydantic-settings==2.7.0
+python-dotenv==1.0.1
+python-multipart==0.0.20
+ccxt==4.4.51
+httpx==0.28.1
+tenacity==9.0.0
