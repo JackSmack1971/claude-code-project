@@ -38,3 +38,47 @@ Move non-deterministic logic into a `useEffect` hook or use a stable seed.
 // GOOD
 const [val, setVal] = useState(null);
 useEffect(() => setVal(Math.random()), []);
+
+```
+
+---
+
+### [INCIDENT-002] [Date: YYYY-MM-DD]
+
+**Error Signature:**
+
+> `PrismaClientInitializationError: Can't reach database server at localhost:5432`
+
+**Context:**
+Running integration tests in the Docker container.
+
+**Root Cause:**
+The app container tries to access `localhost` (itself) instead of the `db` service name defined in `docker-compose.yml`.
+
+**Solution:**
+Ensure `DATABASE_URL` uses the hostname `postgres` (or service name), not `localhost`, when running inside Docker.
+
+---
+
+## 📥 New Entry Template
+
+*Copy and paste this block when logging a new fix.*
+
+### [INCIDENT-###] [Date: YYYY-MM-DD]
+
+**Error Signature:**
+
+> `Insert error message or log snippet here`
+
+**Context:**
+*What were you trying to do?*
+
+**Root Cause:**
+*Why did it fail?*
+
+**Solution:**
+*How was it fixed?*
+
+```
+
+---
